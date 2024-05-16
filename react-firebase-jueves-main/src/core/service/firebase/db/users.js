@@ -49,47 +49,45 @@ async function addUser() {
 }
 
 
-async function updateUser() {
-
-    try {
-      // Obtener el ID del primer usuario
-      const querySnapshot = await getDocs(collection(db, "users"));
-      const firstUserDoc = querySnapshot.docs[0]; // se puede referenciar por posición 
-      const userId = firstUserDoc.id;
+async function updateUser(fieldName, fieldValue, userIndex = 0) {
+  try {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    if (querySnapshot.docs.length > userIndex) {
+      const userDoc = querySnapshot.docs[userIndex]; // Accede al usuario especificado por posición
+      const userId = userDoc.id;
   
-      console.log("ID del primer usuario:", userId);
+      console.log(`ID del usuario en posición ${userIndex}:`, userId);
   
-      // Actualizar el año de nacimiento del primer usuario
       const userRef = doc(db, "users", userId);
-      await updateDoc(userRef, { born: 1999 });
-      console.log("Document successfully updated");
-  
-    } catch (e) {
-      console.error("Error updating document: ", e);
+      await updateDoc(userRef, { [fieldName]: fieldValue });
+      console.log("Documento del usuario actualizado exitosamente");
+    } else {
+      console.log("No hay suficientes usuarios en la colección para actualizar.");
     }
-  
+  } catch (e) {
+    console.error("Error actualizando el documento del usuario: ", e);
   }
+}
+
+async function deleteUser(userIndex = 1) {
+  try {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    if (querySnapshot.docs.length > userIndex) {
+      const userDoc = querySnapshot.docs[userIndex]; // Accede al usuario especificado por posición
+      const userId = userDoc.id;
   
-  async function deleteUser() {
+      console.log(`ID del usuario en posición ${userIndex}:`, userId);
   
-    try {
-      // Obtener el ID del primer usuario
-      const querySnapshot = await getDocs(collection(db, "users"));
-      const firstUserDoc = querySnapshot.docs[1]; // se puede referenciar por posición 
-      const userId = firstUserDoc.id;
-  
-      console.log("ID del segundo usuario:", userId);
-  
-      // Actualizar el año de nacimiento del primer usuario
       const userRef = doc(db, "users", userId);
       await deleteDoc(userRef);
-  
-      console.log("Second user deleted");
-  
-    } catch (e) {
-      console.error("Error deleting second user: ", e);
+      console.log(`Usuario en posición ${userIndex} eliminado exitosamente`);
+    } else {
+      console.log("No hay suficientes usuarios en la colección para eliminar.");
     }
-  
+  } catch (e) {
+    console.error("Error eliminando el usuario: ", e);
   }
+}
+
 
 export { readUsers, addUser, readUserById, deleteUser, updateUser};
