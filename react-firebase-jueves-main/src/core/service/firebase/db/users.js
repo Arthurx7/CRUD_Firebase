@@ -35,7 +35,7 @@ async function getDocument(coll, id) {
 
 async function addUser() {
   try {
-    const docRef = await  (collection(db, "users"), {
+    const docRef = await  addDoc(collection(db, "users"), {
       first: "Alan",
       middle: "Mathison",
       last: "Turing",
@@ -49,41 +49,32 @@ async function addUser() {
 }
 
 
-async function updateUser(fieldName, fieldValue, userIndex = 0) {
+async function updateUser() {
   try {
     const querySnapshot = await getDocs(collection(db, "users"));
-    if (querySnapshot.docs.length > userIndex) {
-      const userDoc = querySnapshot.docs[userIndex]; // Accede al usuario especificado por posición
-      const userId = userDoc.id;
-  
-      console.log(`ID del usuario en posición ${userIndex}:`, userId);
-  
-      const userRef = doc(db, "users", userId);
-      await updateDoc(userRef, { [fieldName]: fieldValue });
-      console.log("Documento del usuario actualizado exitosamente");
-    } else {
-      console.log("No hay suficientes usuarios en la colección para actualizar.");
-    }
+    const userDoc = querySnapshot.docs[0]; 
+    const userId = userDoc.id;
+    const userRef = doc(db, "users", userId);
+
+    await updateDoc(userRef, { ["last"]: "Perez" });
+    console.log("Documento del usuario actualizado exitosamente");
   } catch (e) {
     console.error("Error actualizando el documento del usuario: ", e);
   }
 }
 
-async function deleteUser(userIndex = 1) {
+
+async function deleteUser() {
   try {
     const querySnapshot = await getDocs(collection(db, "users"));
-    if (querySnapshot.docs.length > userIndex) {
-      const userDoc = querySnapshot.docs[userIndex]; // Accede al usuario especificado por posición
-      const userId = userDoc.id;
-  
-      console.log(`ID del usuario en posición ${userIndex}:`, userId);
-  
+    const userDoc = querySnapshot.docs[0]; 
+    const userId = userDoc.id;
+
+    
+
       const userRef = doc(db, "users", userId);
       await deleteDoc(userRef);
-      console.log(`Usuario en posición ${userIndex} eliminado exitosamente`);
-    } else {
-      console.log("No hay suficientes usuarios en la colección para eliminar.");
-    }
+      console.log(`Primer usuario eliminado exitosamente`);
   } catch (e) {
     console.error("Error eliminando el usuario: ", e);
   }
